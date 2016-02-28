@@ -191,7 +191,6 @@ int main(){
 		if(p[i].f)add(p[i].k);
 		else del(p[i].k);
 	}
-	k=0;
 	dfs(1);
 	solve(1,0);
 	printf("%.6lf\n",(double)(ans*M_PI));
