@@ -19,10 +19,6 @@ struct data{
 	ll s,p,q;
 };
 
-struct seg{
-	int l,r;
-};
-
 edge e[M];
 data a[T];
 int h[N],d[N],p[N],t[N],f[N],s[N],c[N];
