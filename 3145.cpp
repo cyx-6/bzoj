@@ -19,7 +19,7 @@ int h1[N],h2[N],sa1[N],sa2[N],rank1[N],rank2[N];
 int t1[N],t2[N],c[N],lg[N],p[N];
 int h[N],g[N];
 int f[N][K];
-bool f1[N],f2[N];
+bool f1[N],f2[N],g1[N],g2[N];
 int n,m,i,j,k,ans,d,u,v,w,l,r;
 
 void build(int n,char *s,int *sa,int *rank,int *h){
@@ -68,7 +68,7 @@ void rmq(){
 		}
 	}
 	lg[1]=0;
-	for(i=2;i<=n+m+1;i++)lg[i]=lg[i>>1]+1;
+	for(i=2;i<=d;i++)lg[i]=lg[i>>1]+1;
 }
 
 int ask(int l,int r){
@@ -109,8 +109,8 @@ void update(int cur){
 	u=a[cur].l;
 	v=a[cur].r;
 	a[cur].s=max(a[u].s,a[v].s);
-	a[cur].u=a[u].u;
-	a[cur].v=a[v].v;
+	a[cur].u=a[u].u?a[u].u:a[v].u;
+	a[cur].v=a[v].v?a[v].v:a[u].v;
 	u=a[u].v;
 	v=a[v].u;
 	if(u<=m ^ v<=m)a[cur].s=max(a[cur].s,ask(u,v));
@@ -145,22 +145,24 @@ int main(){
 		if(i>2 && i!=n+1 && i!=n+2)insert(h[i],1,d,d-i+3);
 		if(d-i+1>1 && d-i+1<=m)f1[i]=true;
 		if(d-i+1>m+1 && d-i+1<=d)f2[i]=true;
+		if(i>1 && i<=n)g1[i]=true;
+		if(i>n+1 && i<=d)g2[i]=true;		
 	}
 	sort(p+1,p+d+1,comp);
 	for(i=1;i<=d;i++){
 		l=p[i];
 		r=sa1[rank1[p[i]]-1];
 		u=get(l);
-		v=r?get(r):0;
+		v=get(r);
 		if(u && v && u!=v){
 			g[v]=u;
-			f1[u]|=f1[v];
-			f2[u]|=f2[v];
 			h[u]=comb(h[u],h[v]);
-			if(!(l==1 || l==n+1 || r==1 || r==n+1))w=1;
-			else w=0;
-			if(f1[u] && f2[u])ans=max(ans,h1[rank1[p[i]]]+w+a[h[u]].s);
 		}
+		f1[u]|=f1[v];
+		f2[u]|=f2[v];
+		g1[u]|=g1[v];
+		g2[u]|=g2[v];
+		if(f1[u] && f2[u])ans=max(ans,h1[rank1[p[i]]]+(g1[u] && g2[u])+a[h[u]].s);
 	}
 	printf("%d\n",ans);
 	return 0;
