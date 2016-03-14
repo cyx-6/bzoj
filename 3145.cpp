@@ -82,7 +82,7 @@ int ask(int l,int r){
 }
 
 int comp(int u,int v){
-	return h1[rank1[u]]>h1[rank1[v]];
+	return h1[rank1[u]]>h1[rank1[v]] || (h1[rank1[u]]==h1[rank1[v]] && rank1[u]<rank1[v]);
 }
 
 int get(int cur){
@@ -132,31 +132,32 @@ int main(){
 	for(i=1;i<=n;i++)s[i]=x[i];
 	s[n+1]='~';
 	for(i=1;i<=m;i++)s[i+n+1]=y[i];
-	d=n+m+1;
+	s[n+m+2]='|';
+	n++;
+	m++;
+	d=n+m;
 	build(d,s,sa1,rank1,h1);
 	reverse(s+1,s+d+1);
 	build(d,s,sa2,rank2,h2);
 	rmq();
 	for(i=1;i<=d;i++){
 		p[i]=i;
-		if(!(i<=2 || (i>n && i<=n+3))){
-			insert(h[i],1,d,d-i+3);
-			if(d-i+1<=m)f1[i]=true;
-			else f2[i]=true;
-		}
+		if(i>2 && i!=n+1 && i!=n+2)insert(h[i],1,d,d-i+3);
+		if(d-i+1>1 && d-i+1<=m)f1[i]=true;
+		if(d-i+1>m+1 && d-i+1<=d)f2[i]=true;
 	}
 	sort(p+1,p+d+1,comp);
 	for(i=1;i<=d;i++){
 		l=p[i];
 		r=sa1[rank1[p[i]]-1];
 		u=get(l);
-		v=rank1[p[i]]==1?0:get(r);
+		v=r?get(r):0;
 		if(u && v && u!=v){
 			g[v]=u;
 			f1[u]|=f1[v];
 			f2[u]|=f2[v];
 			h[u]=comb(h[u],h[v]);
-			if(!(l<2 || (l>n && l<=n+2) || r<2 || (r>n && r<=n+2)))w=1;
+			if(!(l==1 || l==n+1 || r==1 || r==n+1))w=1;
 			else w=0;
 			if(f1[u] && f2[u])ans=max(ans,h1[rank1[p[i]]]+w+a[h[u]].s);
 		}
