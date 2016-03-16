@@ -155,6 +155,7 @@ int main(){
 		u=get(l);
 		v=get(r);
 		if(u && v && u!=v){
+			swap(u,v);
 			g[v]=u;
 			h[u]=comb(h[u],h[v]);
 		}
